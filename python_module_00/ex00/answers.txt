@@ -1,0 +1,11 @@
+# Show the package metadata of numpy.
+
+pip show numpy
+
+# Remove the package numpy.
+
+pip unisntall numpy
+
+# (Re)install the package numpy.
+
+pip install numpy
