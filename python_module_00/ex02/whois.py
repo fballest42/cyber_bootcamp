@@ -4,4 +4,4 @@ import sys
 def not_int(s):
     i = len(s) - 1
     while (i >= 1):
-        if not (s[i] >=)
+        if not (s[i] >= '0')
