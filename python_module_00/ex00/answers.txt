@@ -1,12 +1,23 @@
+# Show the list of packages installed
+
+conda list
+
 # Show the package metadata of numpy.
 
 pip show numpy
 
-# Remove the package numpy.
+# Remove the package numpy erasing the directory of the funtions too.
 
-pip unisntall numpy
+pip unisntall numpy 
+
+# Remove the package numpy erasing the directory of the funtions too.
+
+conda remove numpy
 
 # (Re)install the package numpy.
 
 pip install numpy
 
+# To create a requirements.txt 
+
+conda list --export > requirement_2.txt

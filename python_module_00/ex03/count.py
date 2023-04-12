@@ -3,7 +3,8 @@ import sys
 import string
 
 def text_analyzer(*args):
-    """Counts the number of upper, lower, punctuation and space characters."""
+    """This function counts the number of upper characters, lower characters,
+        punctuation and spaces in a given text"""
     if len(args) > 1:
         print("ERROR")
         return
