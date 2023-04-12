@@ -1,23 +1,19 @@
 # Show the list of packages installed
-
 conda list
+pip list
 
 # Show the package metadata of numpy.
-
+conda info numpy
 pip show numpy
 
 # Remove the package numpy erasing the directory of the funtions too.
-
+conda remove numpy
 pip unisntall numpy 
 
-# Remove the package numpy erasing the directory of the funtions too.
-
-conda remove numpy
-
 # (Re)install the package numpy.
-
+conda install numpy
 pip install numpy
 
 # To create a requirements.txt 
-
-conda list --export > requirement_2.txt
+conda list --export > requirements.txt
+pip list --format=freeze > requirements.txt
