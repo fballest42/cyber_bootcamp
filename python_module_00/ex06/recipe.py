@@ -59,6 +59,8 @@ while not choice == 5:
         ingredients = input("Enter the ingredients in the format "
                             "'bread,butter,jam...': ").split(',')
         meal = input("Enter the type of meal (lunch, dessert...): ")
+        if not meal in ("lunch", "dessert", "starter"):
+            continue;
         time = input("Enter the recipe's prep time, in minutes: ")
         add_recipe(name, ingredients, meal, time)
     elif choice == 2:

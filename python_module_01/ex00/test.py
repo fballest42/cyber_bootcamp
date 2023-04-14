@@ -25,12 +25,23 @@ if __name__ == '__main__':
     first_book.add_recipe(smoothie)
 
     # Add invalid Recipe to Book :
-    # Book.add_recipe(first_book, 6)
+#     Book.add_recipe(first_book, 6)
 
     # Find recipes in Book by type :
     Book.get_recipes_by_types(first_book, 'lunch')
     print("")
+    Book.get_recipes_by_types(first_book, 'dessert')
+    print("")
 
     # Print recipe from Book :
-    print(smoothie) 
+    print(smoothie)
+    print()
+    print(tourte)
+    print()
+
+    #Add invalid Recipe to Book: 
+    Try:
+        Book.add_recipe(first_book, 6)
+    Except:
+        print("ERROR")
     

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from the_bank import Account, Bank
 
 if __name__ == "__main__":
@@ -15,7 +14,7 @@ if __name__ == "__main__":
         value=6460.0,
         ref='58ba2b9954cd278eda8a84147ca73c87',
         info=None
-    )) 
+    ))
 
     if bank.transfer('William John', 'Smith Jane', 1000.0) is False:
         print('Failed')

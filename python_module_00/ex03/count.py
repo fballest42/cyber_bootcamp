@@ -43,5 +43,5 @@ if __name__ == "__main__":
         print("What is the text to analyse?")
         print(">> ", end="")
         sys.stdout.flush()
-        str = sys.stdin.readline()[0:-1]
-        text_analyzer(str)
+        st = sys.stdin.readline()[0:-1]
+        text_analyzer(st)

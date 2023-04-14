@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from the_bank import Account, Bank
 
 if __name__ == "__main__":
@@ -21,4 +20,4 @@ if __name__ == "__main__":
     if bank.transfer('William John', 'Smith Jane', 545.0) is False:
         print('Failed')
     else:
-        print('Success') 
+        print('Success')
