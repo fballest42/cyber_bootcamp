@@ -85,7 +85,7 @@ test_vector("\n\033[33mSingle list in list in list:\033[0m",
 test_vector("\n\033[33mSize negative\033[0m", -1)
 v0 = test_vector("\n\033[33mSize zero\033[0m", 0)
 v = test_vector("\n\033[33mSize positive\033[0m", 4)
-test_vector("\n\033[33mTuple with same number\033[0m", (0, 0))
+test_vector("\n\033[33mTuple with same number\033[0m", (1, 1))
 test_vector("\n\033[33mTuple increasing\033[0m", (0, 10))
 test_vector("\n\033[33mTuple decreasing\033[0m", (10, 0))
 test_vector("\n\033[33mTuple error\033[0m", (0, 1.1))

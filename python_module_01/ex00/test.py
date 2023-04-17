@@ -40,8 +40,6 @@ if __name__ == '__main__':
     print()
 
     #Add invalid Recipe to Book: 
-    Try:
-        Book.add_recipe(first_book, 6)
-    Except:
-        print("ERROR")
+    Book.add_recipe(first_book, 6)
+    print("ERROR")
     

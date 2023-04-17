@@ -112,7 +112,7 @@ class Bank(object):
                 elif key.startswith('zip') or key.startswith('addr'):
                     pass
                 else:
-                    corrupted.__dict__.pop(key)
+                    corrupted.__dict__["fixed"] = 1
                     break
         if self.corrupted(corrupted):
             print("Couldn't fix account.")
