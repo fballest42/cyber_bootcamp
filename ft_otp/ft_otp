@@ -1,0 +1,42 @@
+#!/usr/bin/env python3
+
+import sys
+import argparse
+from cryptography.fernet import Fernet
+
+def generateBasekey(basefile):
+    
+    try:
+        with open(basefile, 'rb') as origin:
+            key = str(origin.readlines())
+            if len(key) != 64:
+                print("ERROR: Base key must have exactly 64 characters.")
+    except:
+        print("ERROR: Invalid arguments")
+        return
+    keyencr = Fernet.generate_key(key)
+    print(keyencr)
+    sys.stdout.write(keyencr)
+
+
+def generateTOTP(key_str):
+    print("HOLA")
+
+
+
+if __name__ == '__main__':
+    if len(sys.argv) == 3:
+        parser = argparse.ArgumentParser(description='Generate keys Time-Based One-Time Password Algorithm')
+        parser.add_argument('-g', 'gen', type=str, help='Flag to generate new keys with time system')
+        parser.add_argument('-k', 'key', type=str, help='Root to store the new base key encripted')
+        # parser.add_argument('key_str', help='String that indicates the file name to read or store')
+        args = parser.parse_args()
+        if args.gen:
+            generateBasekey(args.key_str)
+        elif args.key:
+            generateTOTP(args.key_str)
+    else:
+        print("ERROR: Invalid arguments.")
+
+
+

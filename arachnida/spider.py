@@ -8,6 +8,28 @@ from bs4 import BeautifulSoup
 import pathlib
 import sys
 
+def image_selector(orig, type, soup, save_dir, extensions, level, dom):
+    for img in soup.find_all(orig):
+        src = img.get(type)
+        if not src or len(src) == 0:
+            continue
+        parsed = urlparse(urljoin(dom, src.lstrip(' ')))
+        src = urljoin(dom, src.lstrip(' '))
+        if parsed.scheme not in\
+            ('ftp', 'gopher', 'imap', 'mailto', 'mms', 'news', 'nntp', 'prospero', 'rsync', 'rtsp', 'rtspu', 'sftp', 'shttp', 'sip', 'sips', 'snews', 'svn', 'svn+ssh', 'telnet', 'wais', 'ws', 'wss'):
+            if parsed.scheme not in ('http', 'https', 'file'):
+                if src and any(src.endswith(ext) for ext in extensions) and requests.get('http://' + src).status_code == 200:
+                    download_image('http://' + src, save_dir)
+                elif src and any(src.endswith(ext) for ext in extensions) and requests.get('https://' + src).status_code == 200:
+                    download_image('https://' + src, save_dir)
+                elif src and any(src.endswith(ext) for ext in extensions) and requests.get('file://' + src).status_code == 200:
+                    download_image('file://' + src, save_dir)
+            elif parsed.scheme in ('http', 'https', 'file', ' http', ' https', ' file') and any(src.endswith(ext) for ext in extensions):
+                download_image(src, save_dir)
+        sys.stdout.write('\r')
+        sys.stdout.write("Level: [{}] --- Images Located: [{}]\r".format(level, _num_img))
+        sys.stdout.flush()
+
 def download_image(image_url, save_dir):
     global _num_img
     response = requests.get(image_url)
@@ -28,38 +50,16 @@ def spider(url, recursive, level,save_dir, extensions, visited, dominio):
         return
     if response.url != '#' and response.url != '':
         soup = BeautifulSoup(response.text, 'html.parser')
-    for img in soup.find_all('img'):
-        src = img.get('src')
-        parsed = urlparse(src)
-        if parsed.netloc.endswith(dominio) and parsed.scheme not in\
-            ('ftp', 'gopher', 'imap', 'mailto', 'mms', 'news', 'nntp', 'prospero', 'rsync', 'rtsp', 'rtspu', 'sftp', 'shttp', 'sip', 'sips', 'snews', 'svn', 'svn+ssh', 'telnet', 'wais', 'ws', 'wss'):
-            if parsed.scheme not in ('http', 'https', 'file'):
-                if src and any(src.endswith(ext) for ext in extensions) and requests.get('http://' + src):
-                    download_image('http://' + src, save_dir)
-                elif src and any(src.endswith(ext) for ext in extensions) and requests.get('https://' + src):
-                    download_image('https://' + src, save_dir)
-                elif src and any(src.endswith(ext) for ext in extensions) and requests.get('file://' + src):
-                    download_image('file://' + src, save_dir)
-            elif parsed.scheme in ('http', 'https', 'file') and any(src.endswith(ext) for ext in extensions):
-                download_image(src, save_dir)
-    for img in soup.find_all('image'):
-        src = img.get('href')
-        parsed = urlparse(src)
-        if parsed.netloc.endswith(dominio) and parsed.scheme not in\
-            ('ftp', 'gopher', 'imap', 'mailto', 'mms', 'news', 'nntp', 'prospero', 'rsync', 'rtsp', 'rtspu', 'sftp', 'shttp', 'sip', 'sips', 'snews', 'svn', 'svn+ssh', 'telnet', 'wais', 'ws', 'wss'):
-            if parsed.scheme not in ('http', 'https', 'file'):
-                print("HOLA3")
-                if src and any(src.endswith(ext) for ext in extensions) and requests.get('http://' + src):
-                    download_image('http://' + src, save_dir)
-                elif src and any(src.endswith(ext) for ext in extensions) and requests.get('https://' + src):
-                    download_image('https://' + src, save_dir)
-                elif src and any(src.endswith(ext) for ext in extensions) and requests.get('file://' + src):
-                    download_image('file://' + src, save_dir)
-            elif parsed.scheme in ('http', 'https', 'file') and any(src.endswith(ext) for ext in extensions):
-                num_img = download_image(src, save_dir)
-    sys.stdout.write('\r')
-    sys.stdout.write("Level: [{}] --- Images Located: [{}]\r".format(level, _num_img))
-    sys.stdout.flush()
+    dom = urlparse(response.request.url).scheme + "://" + urlparse(response.request.url).netloc
+    image_selector('img', 'src', soup, save_dir, extensions, level, dom)
+    image_selector('img', 'href', soup, save_dir, extensions, level, dom)
+    image_selector('img', 'srcset', soup, save_dir, extensions, level, dom)
+    image_selector('image', 'src', soup, save_dir, extensions, level, dom)
+    image_selector('image', 'href', soup, save_dir, extensions, level, dom)
+    image_selector('image', 'srcset', soup, save_dir, extensions, level, dom)
+    image_selector('i', 'src', soup, save_dir, extensions, level, dom)
+    image_selector('i', 'href', soup, save_dir, extensions, level, dom)
+    image_selector('i', 'srcset', soup, save_dir, extensions, level, dom)
     if recursive:
         for link in soup.find_all('a', href=True):
             href = link.get('href')
@@ -71,9 +71,8 @@ def spider(url, recursive, level,save_dir, extensions, visited, dominio):
             if not parsed.netloc.endswith(dominio) or parsed.scheme in ('ftp', 'gopher', 'imap', 'mailto', 'mms', 'news', 'nntp', 'prospero', 'rsync', 'rtsp', 'rtspu', 'sftp', 'shttp', 'sip', 'sips', 'snews', 'svn', 'svn+ssh', 'telnet', 'wais', 'ws', 'wss'):
                 visited.add(urljoin(response.request.url, href))
                 continue
-                # href = '{}://{}'.format(parsed.scheme or 'https', parsed.netloc) + parsed.path
             href = urljoin(response.request.url, href)
-            if href not in visited and parsed.netloc.endswith(dominio): # and any(href.endswith(ext) for ext in extensions):
+            if href not in visited and parsed.netloc.endswith(dominio):
                 spider(href, recursive, level - 1, save_dir, extensions, visited, dominio)      
     # print(visited)
 

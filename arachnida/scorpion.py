@@ -4,8 +4,8 @@ import sys
 import exiftool
 
 def getExif(image_name):
-   with exiftool.ExifToolHelper() as et:
-    metadata = et.get_metadata(image_name)
+    with exiftool.ExifToolHelper() as et:
+        metadata = et.get_metadata(image_name)
     for dic in metadata:
         print("\n{:*>80s}".format("*"))
         print("* METADATOS DEL ARCHIVO {:>>53s} *".format(dic['SourceFile'].upper()))

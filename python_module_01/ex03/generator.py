@@ -2,6 +2,8 @@
 """ Vector tests
 
 """
+from random import randint
+
 def generator(text, sep=" ", option=None):
     """A generator that splits text according to 'sep' and 'option', and yields the results"""
     if not isinstance(text, str) or option not in [None, "shuffle", "unique", "ordered"]:
@@ -10,7 +12,14 @@ def generator(text, sep=" ", option=None):
         if option is None:
             listy = text.split(sep)
         elif option == "shuffle":
-            listy = set(text.split(sep))
+            listy = []
+            tmp = text.split(sep)
+            i = 0
+            while tmp[i]:
+                a = randint(len(tmp))
+                listy.append(tmp[a])
+                tmp.remove(a)
+            # listy = set(text.split(sep))
         elif option == "unique":
             listy = list(dict.fromkeys(text.split(sep)))
         elif option == "ordered":
@@ -19,7 +28,7 @@ def generator(text, sep=" ", option=None):
             yield item 
 
 if __name__ == '__main__':
-    TEXT = "Le Lorem Ipsum est simplement du faux texte."
+    TEXT = "Le Lorem Ipsum est simplement du faux texte Le Lorem."
 
     print("Regular split :")
     for i in generator(TEXT):
