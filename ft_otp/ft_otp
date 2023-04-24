@@ -2,39 +2,87 @@
 
 import sys
 import argparse
+import base64
+import hmac
+import struct
+import time
+import os
 from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
-def generateBasekey(basefile):
-    
+def generateBasekey(basetext):
+    """GENERATE AN ENCRYPTED FILE TAHTA STORES YOUR SECRET"""
+    global password
+    global kdf
     try:
-        with open(basefile, 'rb') as origin:
-            key = str(origin.readlines())
-            if len(key) != 64:
-                print("ERROR: Base key must have exactly 64 characters.")
+        with open(str(basetext), 'rb') as infile:
+            key_lines = infile.readlines()
+            for k in key_lines:
+                key = ''.join(k.decode().rstrip('\n'))
+            if len(key) < 32:
+                print("ERROR: Base key must have exactly 32 characters.")
+                return
     except:
-        print("ERROR: Invalid arguments")
+        key = str(basetext)
+        if len(key) < 32:
+            print("ERROR: Base key must have exactly 32 characters.")
+            return
+    keyhex = key.encode().hex()
+    keystr = base64.urlsafe_b64encode(kdf.derive(password.encode()))
+    f = Fernet(keystr)
+    encrypted = f.encrypt(keyhex.encode())
+    with open("ft_otp.key", 'wb') as filekey:
+        filekey.write(encrypted)
+    print("Key was successfully saved in ft_otp.key")
+
+def generateTOTP(key_file):
+    """GENERATE AN TOTP FOR THE ENCRYPTED SECRET"""
+    global kdf
+    global password
+    try:
+        with open(key_file, 'rb') as read_file:
+            decrypted = read_file.read()
+    except:
+        print("ERROR: File name incorret or corrupted.")
         return
-    keyencr = Fernet.generate_key(key)
-    print(keyencr)
-    sys.stdout.write(keyencr)
-
-
-def generateTOTP(key_str):
-    print("HOLA")
-
-
+    try:
+        keystr = base64.urlsafe_b64encode(kdf.derive(password.encode()))
+        f = Fernet(keystr)
+        result = f.decrypt(decrypted)
+    except:
+        print("ERROR: Wrong password.")
+        return
+    key = base64.b32encode(result)
+    # print(key) #YOU WILL NEED TO UNCOMMET THIS LINE TO TEST IN THE WEBPAGE https://totp.youngforest.me/
+    timesys = int(time.time() / 30)
+    counter = timesys.to_bytes(8, byteorder="big")
+    mac = hmac.new(key, counter, 'sha1')
+    offset = mac.digest()[-1] & 0x0f
+    binary = struct.unpack('>L', mac.digest()[offset:offset+4])[0] & 0x7fffffff
+    keyotp = str(binary)[-6:].zfill(6)
+    print(keyotp)
 
 if __name__ == '__main__':
     if len(sys.argv) == 3:
         parser = argparse.ArgumentParser(description='Generate keys Time-Based One-Time Password Algorithm')
-        parser.add_argument('-g', 'gen', type=str, help='Flag to generate new keys with time system')
-        parser.add_argument('-k', 'key', type=str, help='Root to store the new base key encripted')
-        # parser.add_argument('key_str', help='String that indicates the file name to read or store')
+        parser.add_argument('-g', '--gen', type=str, help='Flag to generate new keys with time system')
+        parser.add_argument('-k', '--key', type=str, help='Root to store the new base key encripted')
         args = parser.parse_args()
+        global password
+        global kdf
+        password = input("What is the password to encrypt your secret password? ") #HABILITATE THIS LINE TO INPUT A PASSWORD
+        # password = "Nano2023" #HABILITATE THIS LINE FOR A FIX PASSWORD
+        salt = b"\xa8\xc8\xd71\xd71hA\x06Q\x8e'=\x93\xb2q"
+        kdf = PBKDF2HMAC(
+            algorithm = hashes.SHA256(),
+            length = 32,
+            salt = salt,
+            iterations = 390000)
         if args.gen:
-            generateBasekey(args.key_str)
+            generateBasekey(args.gen)
         elif args.key:
-            generateTOTP(args.key_str)
+            generateTOTP(args.key)
     else:
         print("ERROR: Invalid arguments.")
 
