@@ -10,28 +10,36 @@ import os
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+import pyotp
 
 def generateBasekey(basetext):
     """GENERATE AN ENCRYPTED FILE TAHTA STORES YOUR SECRET"""
     global password
     global kdf
+    key = ''
     try:
         with open(str(basetext), 'rb') as infile:
-            key_lines = infile.readlines()
+            key_lines = infile.read().decode()
             for k in key_lines:
-                key = ''.join(k.decode().rstrip('\n'))
-            if len(key) < 32:
-                print("ERROR: Base key must have exactly 32 characters.")
+                if k in ("\n", "\r"):
+                    continue
+                if not k.upper() in "0123456789ABCDEF":
+                    print("ERROR: Not hex file.")
+                    return
+                key += ''.join(k)
+            if len(key) < 64:
+                print("ERROR: Base key must have exactly 64 characters.")
                 return
     except:
         key = str(basetext)
-        if len(key) < 32:
-            print("ERROR: Base key must have exactly 32 characters.")
+        print("AQUI", key)
+        if len(key) < 64:
+            print("ERROR: Base key must have exactly 64 characters.")
             return
-    keyhex = key.encode().hex()
+    keyhex = key.encode()
     keystr = base64.urlsafe_b64encode(kdf.derive(password.encode()))
     f = Fernet(keystr)
-    encrypted = f.encrypt(keyhex.encode())
+    encrypted = f.encrypt(keyhex)
     with open("ft_otp.key", 'wb') as filekey:
         filekey.write(encrypted)
     print("Key was successfully saved in ft_otp.key")
@@ -53,11 +61,10 @@ def generateTOTP(key_file):
     except:
         print("ERROR: Wrong password.")
         return
-    key = base64.b32encode(result)
-    # print(key) #YOU WILL NEED TO UNCOMMET THIS LINE TO TEST IN THE WEBPAGE https://totp.youngforest.me/
+    result = bytes.fromhex(result.decode()).decode("ASCII")
     timesys = int(time.time() / 30)
     counter = timesys.to_bytes(8, byteorder="big")
-    mac = hmac.new(key, counter, 'sha1')
+    mac = hmac.new(result.encode(), counter, 'sha1')
     offset = mac.digest()[-1] & 0x0f
     binary = struct.unpack('>L', mac.digest()[offset:offset+4])[0] & 0x7fffffff
     keyotp = str(binary)[-6:].zfill(6)
@@ -72,7 +79,7 @@ if __name__ == '__main__':
         global password
         global kdf
         password = input("What is the password to encrypt your secret password? ") #HABILITATE THIS LINE TO INPUT A PASSWORD
-        # password = "Nano2023" #HABILITATE THIS LINE FOR A FIX PASSWORD
+        password = "Nano2023" #HABILITATE THIS LINE FOR A FIX PASSWORD
         salt = b"\xa8\xc8\xd71\xd71hA\x06Q\x8e'=\x93\xb2q"
         kdf = PBKDF2HMAC(
             algorithm = hashes.SHA256(),
