@@ -106,14 +106,7 @@ class Bank(object):
         if addr_check == 0:
             corrupted.__dict__['addr'] = '42 rue des Corruptions'
         if len(corrupted.__dict__) % 2 == 0:
-            for key in corrupted.__dict__.keys():
-                if key == 'name' or key == 'id' or key == 'value':
-                    pass
-                elif key.startswith('zip') or key.startswith('addr'):
-                    pass
-                else:
-                    corrupted.__dict__["fixed"] = 1
-                    break
+            corrupted.__dict__["fixed"] = 1
         if self.corrupted(corrupted):
             print("Couldn't fix account.")
             return False

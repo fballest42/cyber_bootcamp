@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from the_bank import Account, Bank
 
 if __name__ == "__main__":
