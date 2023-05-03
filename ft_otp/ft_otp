@@ -78,8 +78,8 @@ if __name__ == '__main__':
         args = parser.parse_args()
         global password
         global kdf
-        #password = input("What is the password to encrypt your secret password? ") #HABILITATE THIS LINE TO INPUT A PASSWORD
-        password = "Nano2023" #INHABILITATE THIS LINE FOR A FIX PASSWORD
+        password = input("What is the password to encrypt your secret password? ") #HABILITATE THIS LINE TO INPUT A PASSWORD
+        # password = "Nano2023" #INHABILITATE THIS LINE FOR A FIX PASSWORD
         salt = b"\xa8\xc8\xd71\xd71hA\x06Q\x8e'=\x93\xb2q"
         kdf = PBKDF2HMAC(
             algorithm = hashes.SHA256(),
