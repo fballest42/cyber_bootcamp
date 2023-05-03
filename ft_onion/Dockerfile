@@ -1,8 +1,7 @@
 FROM debian:buster
 
-ARG HOME ~/
-
-ENV HOME_ENV ${HOME}
+ARG ONI_USR
+ARG ONI_PASS
 
 LABEL mainteiner=fballest@student.42madrid.com
 
@@ -16,13 +15,13 @@ RUN echo "HiddenServicePort 80 127.0.0.1:80" >> /etc/tor/torrc
 RUN echo "Port 4242" >> /etc/ssh/sshd_config
 RUN echo "AuthorizedKeysFile /.ssh/fbskey.pub" >> /etc/ssh/sshd_config
 
+RUN adduser ${ONI_USR}; echo "${ONI_USR}:${ONI_PASS}" | chpasswd
+
 COPY /conf/fbskey.pub /.ssh/fbskey.pub
 RUN chmod 600 /.ssh/fbskey.pub
-
-RUN adduser fballest; echo 'fballest:1324-Abc.' | chpasswd
 
 RUN service tor start
 
 EXPOSE 80 4242
 
-CMD service tor start; cat /var/lib/tor/hidden_service/hostname; service ssh start; nginx -g 'daemon off;'; 
+CMD service tor start; cat /var/lib/tor/hidden_service/hostname; service ssh start; nginx -g 'daemon off;';

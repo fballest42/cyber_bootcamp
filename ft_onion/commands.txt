@@ -1,0 +1,6 @@
+#CREAR IMAGEN CON LAS VARIABLE DE ENTORNO
+docker build --build-arg ONI_USR=fballest --build-arg ONI_PASS=1324-Abc. -t ft_onion .
+
+# CORRER EL CONTENEDOR CON LAS VARIABLES DE ENTORNO EN EL FICHERO .ENV
+docker run -d --env-file=.env -p 80:80 -p 4242:4242 ft_onion
+
