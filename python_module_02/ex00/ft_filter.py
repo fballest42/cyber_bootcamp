@@ -18,5 +18,4 @@ def ft_filter(function_to_apply, iterable):
                 yield elem
         else:
             return None
-    except Exception as exc: 
-        print(exc)
+    except Exception as exc:         print(exc)

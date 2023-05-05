@@ -18,8 +18,7 @@ def image_selector(orig, type, soup, save_dir, extensions, level, dom):
             for i in src.split(' '):
                 if i.endswith(extensions):
                     download_image(i, save_dir)
-        else:            
-            parsed = urlparse(urljoin(dom, src.lstrip(' ')))
+        else:                        parsed = urlparse(urljoin(dom, src.lstrip(' ')))
             src = urljoin(dom, parsed.path.lstrip(' '))
             if parsed.scheme not in\
                 ('ftp', 'gopher', 'imap', 'mailto', 'mms', 'news', 'nntp', 'prospero', 'rsync', 'rtsp', 'rtspu', 'sftp', 'shttp', 'sip', 'sips', 'snews', 'svn', 'svn+ssh', 'telnet', 'wais', 'ws', 'wss'):

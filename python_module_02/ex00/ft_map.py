@@ -19,7 +19,6 @@ def ft_map(function_to_apply, iterable):
                 yield function_to_apply(i)
         else:
             return None
-    except Exception as exc: 
-        print(exc)
+    except Exception as exc:         print(exc)
 
 # print(ft_map(lambda dum: dum + 1, x))

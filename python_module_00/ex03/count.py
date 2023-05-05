@@ -24,7 +24,7 @@ def text_analyzer(*args):
             upper += 1
         elif st[i].islower():
             lower += 1
-        elif st[i] in (' ', '\t', '\r', '\v', '\f'):
+        elif st[i] in (' ', ' ', '\r', '\v', '\f'):
             space += 1
         elif st[i] in (string.punctuation):
             punct += 1

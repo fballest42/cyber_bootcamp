@@ -15,8 +15,7 @@ while 1:
         break
     try:
         choice = int(choice)
-    except ValueError: 
-        print("That's not a number.")
+    except ValueError:         print("That's not a number.")
         attempt += 1
         continue
     if choice < 1 or choice > 99:

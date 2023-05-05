@@ -24,7 +24,6 @@ def generator(text, sep=None, option=None):
             listy = sorted(text.split(sep))
         for item in listy:
             yield item 
-
 # if __name__ == '__main__':
 #     TEXT = "Le Lorem Ipsum est simplement du faux texte Le Lorem Ipsum est ."
 

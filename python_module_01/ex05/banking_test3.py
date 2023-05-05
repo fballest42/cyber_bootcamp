@@ -13,8 +13,7 @@ if __name__ == "__main__":
                           addr='221B Baker street',
                           value=25000.0,
                           info=None)
-    
-    acc_invalid_4 = Account("Douglass",
+        acc_invalid_4 = Account("Douglass",
                             zip='42',
                             addr='boulevard bessieres',
                             value=42)
@@ -34,8 +33,7 @@ if __name__ == "__main__":
                             zip='3',
                             addr='France',
                             value=42)
-    
-    bank.add(acc_valid_1)
+        bank.add(acc_valid_1)
     bank.add()
 
     if bank.transfer('William John', 'Smith Jane', 1000.0) is False:

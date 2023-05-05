@@ -14,7 +14,6 @@ class Evaluator:
                 total += elem[0] * len(elem[1])
             return total
         return -1 
-
     def enumerate_evaluate(self, coefs, words):
         """Evaluate with enumerate()"""
         if self.valid(coefs, words):

@@ -9,8 +9,7 @@ from recipe import Recipe
 class Book:
     """A class to represent a cookbook"""
 
-    def __init__(self, name): 
-        self.name = name
+    def __init__(self, name):         self.name = name
         self.last_update = datetime.now()
         self.creation_date = self.last_update
         self.recipes_list = {'starter': [], 'lunch': [], 'dessert': []}

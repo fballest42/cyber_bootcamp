@@ -9,8 +9,7 @@ def valid_values(name, lvl, time, ingr, desc, rtype):
     valid = 1
     if not isinstance(name, str):
         print("Error : Name isn't a string.")
-        valid = 0 
-    try:
+        valid = 0     try:
         if len(name) == 0:
             print("Error : Name is empty.")
             valid = 0

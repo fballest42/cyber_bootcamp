@@ -26,8 +26,7 @@ if __name__ == "__main__":
         ret += elem
         time.sleep(0.005)
     print()
-    print(ret) 
-    # listy = range(1000)
+    print(ret)     # listy = range(1000)
     # ret = 0
     # for elem in ft_progress(listy):
     #     ret += (elem + 3) % 5

@@ -18,8 +18,7 @@ class Account(object):
 class Bank(object):
     """A class to handle accounts and perform transfers"""
 
-    def __init__(self): 
-        self.account = []
+    def __init__(self):         self.account = []
 
     def add(self, *account):
         """A function to add an account to the Account list"""

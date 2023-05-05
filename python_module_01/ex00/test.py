@@ -39,7 +39,6 @@ if __name__ == '__main__':
     print(tourte)
     print()
 
-    #Add invalid Recipe to Book: 
-    Book.add_recipe(first_book, 6)
+    #Add invalid Recipe to Book:     Book.add_recipe(first_book, 6)
     print("ERROR")
     

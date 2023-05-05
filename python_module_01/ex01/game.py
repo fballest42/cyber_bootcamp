@@ -9,7 +9,6 @@ class GotCharacter:
         self.first_name = first_name
         self.is_alive = is_alive 
 
-
 class Baelish(GotCharacter):
     """A class representing the Baelish House - or how one man can stand by himself"""
 

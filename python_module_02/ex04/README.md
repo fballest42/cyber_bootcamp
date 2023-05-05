@@ -6,4 +6,3 @@ It contains two different funtions.
 logger --> A logger funtion from coffemachine exercise
 progressbar --> A progress bar with colour 
 
-

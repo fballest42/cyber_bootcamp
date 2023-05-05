@@ -12,9 +12,7 @@ class TinyStatistician:
   """ A class that include some statyticians methods """
   def __init__(self):
     pass
-  
-  @staticmethod        
-  def mean(x):
+    @staticmethod          def mean(x):
     """ Method of the class TinyStatytician that calculate
         the mean of a list or matrix """
     if x == None or len(x) == 0:
@@ -28,8 +26,7 @@ class TinyStatistician:
       print(exc)
       return None
 
-  @staticmethod 
-  def median(x):
+  @staticmethod   def median(x):
     """Method of the class TinyStatytician that calculate
        the median of a list or matrix """
     return TinyStatistician.percentile(x, 50)
