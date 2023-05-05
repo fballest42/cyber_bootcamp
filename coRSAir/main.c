@@ -111,37 +111,22 @@ int main(int argc, char **argv)
     BN_CTX_free(ctx);
     BN_GENCB *cb;
     int i = 0;
+    if (BN_is_odd(bn_pmed))
+        BN_add(bn_pmed, bn_pmed, bn_one);
     while (1)
     {
         ctx = BN_CTX_new();
-        cb = BN_GENCB_new();
-        if (BN_is_prime_ex(bn_pmed, 1, ctx, cb))
-        {
-            printf("PRIMO: ");
-            BN_print_fp(stdout, bn_pmed);
-            printf("\n");
-            BN_CTX_free(ctx);
-            ctx = BN_CTX_new();
-            BN_mod(rem, n, bn_pmed, ctx);
-            if (BN_is_zero(rem))
-            {
-                BN_CTX_free(ctx);
-                BN_GENCB_free(cb);
-                break;
-            }
-            else
-            {
-                BN_CTX_free(ctx);
-                BN_GENCB_free(cb);
-            }
-        }
-        else
+        BN_mod(rem, n, bn_pmed, ctx);
+        if (BN_is_zero(rem))
         {
             BN_CTX_free(ctx);
-            BN_GENCB_free(cb);
+            break;
         }
         BN_sub(bn_pmed, bn_pmed, bn_two);
-        printf("%d\n", i++);
+        i++;
+        if (i % 100 == 0)
+            printf("%i\r", i);
+        BN_CTX_free(ctx);
     }
     BN_print_fp(stdout, bn_pmin);
     EVP_PKEY_free(pkey);
