@@ -1,7 +1,7 @@
 NAME = corsair
 
-INCLUDE = -I /goinfre/fballest/miniconda3/include/ 
-LIBS = /goinfre/fballest/miniconda3/lib/libcrypto.a /goinfre/fballest/miniconda3/lib/libssl.a
+INCLUDE = -I /Users/fballest/42/miniconda3/include/ 
+LIBS = /Users/fballest/42/miniconda3/lib/libcrypto.a /Users/fballest/42/miniconda3/lib/libssl.a
 
 CFLAGS = ${INCLUDE}
 
@@ -11,7 +11,7 @@ OBJ = ${SRC:.c=.o}
 all: ${NAME}
 
 ${NAME} : ${OBJ}
-	${CC} ${LIBS} ${OBJ} -O3 -o ${NAME} 
+	${CC} ${LIBS} ${OBJ} -fsanitize=address -g3 -O3 -o ${NAME} 
 re: clean all
 
 clean:

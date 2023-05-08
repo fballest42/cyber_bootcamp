@@ -9,129 +9,104 @@
 #include<openssl/rsa.h>
 #include<openssl/bn.h>
 
-void BN_sqrt(BIGNUM *r, const BIGNUM *a, BN_CTX *ctx)
+void mod_exp_print(const BIGNUM *n, const BIGNUM *k, int i, char **argv) 
 {
-    BIGNUM *x0 = BN_new();
-    BIGNUM *x1 = BN_new();
-    BIGNUM *two = BN_new();
-    BIGNUM *tmp = BN_new();
+    printf("\n*************************************************\n");
+    printf("FILE: \t\t\t%s\n", argv[i + 1]);
+    printf("*************************************************\n");
+    printf("MODULO ---> \t\t");
+    BN_print_fp(stdout, n);
+    printf("\nEXPONENTE ---> \t\t");
+    BN_print_fp(stdout, k);
+    printf("\n");
+}
 
-    int cmp; BN_set_word(x0, 1);
-    BN_copy(x1, a);
-    BN_add(x1, x1, x0);
-    BN_rshift(x1, x1, 1);
-    BN_set_word(two, 2); 
-    do 
+void create_prikey(BIGNUM *p, BIGNUM *n, BIGNUM *k, int argc)
+{
+    BIGNUM *q = BN_new();
+    BIGNUM *z = BN_new();
+
+
+}
+
+void check_gcd(const BIGNUM **n, const BIGNUM **k, int argc, char **argv)
+{
+    BIGNUM      *tp;
+    BIGNUM      *p[argc];
+    BN_CTX      *ct;
+    char        *res;
+    int         key_num = 0;
+
+    for (int i = 0; i < argc - 2; i++)
     {
-        BN_copy(x0, x1);
-        BN_div(tmp, NULL, a, x0, ctx);
-        BN_add(x1, x0, tmp);
-        BN_rshift(x1, x1, 1);
-        cmp = BN_cmp(x0, x1);
-    } 
-    while (cmp != 0); BN_copy(r, x0); BN_free(x0); BN_free(x1); BN_free(two); BN_free(tmp);
-} 
+        for (int j = i + 1; j < argc - 1; j++)
+        {
+            tp = BN_new();
+            ct = BN_CTX_new();
+            BN_gcd(p[i], n[j], n[i], ct);
+            res = BN_bn2dec(p[i]);
+			if (strncmp(res, "1\0", 2) != 0)
+            {
+                p[key_num] = BN_dup(tp);
+                create_prikey(p[key_num], n[i], k[i], key_num);
+                create_prikey(p[key_num], n[j], k[j], key_num);
+                key_num++;
+            }
+            BN_free(p[i]);
+            BN_CTX_free(ct);
+        }
+    }
+}
+
+int read_certificates(int argc, char **argv)
+{
+    
+    return (0);
+}
 
 int main(int argc, char **argv)
 {
-    int ret;
-    if (argc != 2)
-        return (printf("ERROR: Invalid arguments.\n"));
+    EVP_PKEY        *pkey[argc];
+    BIO             *outbio = BIO_new_fp(stdout, BIO_NOCLOSE);
+    BIO             *certbio[argc];
+    const BIGNUM    *n[argc];
+    const BIGNUM    *k[argc];
+    BIGNUM          *p[argc;]
+    RSA             *cert[argc];
+    RSA             *prikey[argc];
+    char            *mod[argc];
+    char            *file[argc];
+    int             i;
 
     OpenSSL_add_all_algorithms();
     ERR_load_BIO_strings();
     ERR_load_crypto_strings();
-    EVP_PKEY    *pkey = NULL;
-    BIO         *outbio = NULL;
-    BIO         *certbio = BIO_new(BIO_s_file());
-    RSA         *cert = NULL;
-    const BIGNUM      *n = BN_new();
-    const BIGNUM      *k = BN_new();
-    char              *mod;
-    outbio  = BIO_new_fp(stdout, BIO_NOCLOSE);
-    if ((ret = BIO_read_filename(certbio, argv[1])) == 0)
-        return (printf("ERROR: Invalid certificate or corrupted.\n"));
-    if (!(cert = PEM_read_bio_RSA_PUBKEY(certbio, NULL, 0, NULL)))
-        return (printf("ERROR: Loading cert into memory\n"));
-    RSA_get0_key(cert, &n, &k, NULL);
-    
-    printf("MODULO:\n");
-    BN_print_fp(stdout, n);
-    printf("\n\nEXPONENTE:\n");
-    BN_print_fp(stdout, k);
-    printf("\n");
-    mod = BN_bn2dec(n);
-    printf("\nMODULO EN DECIMAL:%s\n", mod);
-    size_t l = strlen(mod);
-    size_t lp = l / 2;
-    char pmax[lp + 1];
-    char pmin[lp + 1];
-    char pmed[lp + 1];
-    printf("\nEL MODULO MIDE: %lu y los primos son de minimo %lu\n", l, lp);
-    for (int i = 0; i < lp; i++)
-    {
-        if (i == 0 || i == lp - 1)
-        {
-            pmin[i] = '1';
-            pmed[i] = '1';
-        }
-        else
-        {
-            pmin[i] = '0';
-            pmed[i] = '0';
-        }
-        pmax[i] = '9';
-        pmax[i+1] = '\0';
-        pmin[i+1] = '\0';
-        pmed[i+1] = '\0';
-    }
-    // printf("pmax %s\npmin %s\npmed %s\n", pmax, pmin, pmed);
-    BIGNUM *bn_pmax = BN_new();
-    BIGNUM *bn_pmin = BN_new();
-    BIGNUM *bn_pmed = BN_new();
-    BIGNUM *bn_one = BN_new();
-    BIGNUM *bn_two = BN_new();
-    BIGNUM *bn_root = BN_new();
-    BIGNUM *rem = BN_new();
-    BN_CTX *ctx = BN_CTX_new();
-    // BN_dec2bn(&bn_pmax, pmax);
-    // BN_dec2bn(&bn_pmin, pmin);
 
-    BN_sqrt(bn_pmed, n, ctx);
-    BN_dec2bn(&bn_one, "1");
-    BN_dec2bn(&bn_two, "2");
-    bn_pmin = BN_dup(bn_pmed);
-    bn_pmax = BN_dup(bn_pmed);
-    BN_print_fp(stdout, bn_pmin);
-    printf("\n");
-    BN_print_fp(stdout, bn_pmed);
-    printf("\n");
-    BN_print_fp(stdout, bn_pmax);
-    printf("\n");
-    BN_CTX_free(ctx);
-    BN_GENCB *cb;
-    int i = 0;
-    if (BN_is_odd(bn_pmed))
-        BN_add(bn_pmed, bn_pmed, bn_one);
-    while (1)
+    if (argc < 2)
+        return (printf("ERROR: Invalid arguments.\n"));
+    for (i = 0; i < argc - 1; i++)
     {
-        ctx = BN_CTX_new();
-        BN_mod(rem, n, bn_pmed, ctx);
-        if (BN_is_zero(rem))
-        {
-            BN_CTX_free(ctx);
-            break;
-        }
-        BN_sub(bn_pmed, bn_pmed, bn_two);
-        i++;
-        if (i % 100 == 0)
-            printf("%i\r", i);
-        BN_CTX_free(ctx);
+        certbio[i] = BIO_new(BIO_s_file());
+        n[i] = BN_new();
+        k[i] = BN_new();
+        pkey[i] = NULL;
+        file[i] = strdup(argv[i + 1]);
+        if (!(BIO_read_filename(certbio[i], argv[i + 1])))
+            return (printf("ERROR: Invalid certificate or corrupted.\n"));
+        if (!(cert[i] = PEM_read_bio_RSA_PUBKEY(certbio[i], NULL, 0, NULL)))
+            return (printf("ERROR: Loading cert into memory.\n"));
+        RSA_get0_key(cert[i], &n[i], &k[i], NULL);
+        mod_exp_print(n[i], k[i], i, argv);
+        mod[i] = BN_bn2dec(n[i]);
+        n[i] = BN_dup(n[i]);
+        k[i] = BN_dup(k[i]);
+        EVP_PKEY_free(pkey[i]);
+        RSA_free(cert[i]);
+        BIO_free_all(certbio[i]);
     }
-    BN_print_fp(stdout, bn_pmin);
-    EVP_PKEY_free(pkey);
-    RSA_free(cert);
-    BIO_free_all(certbio);
+    check_gcd(n, k, argc, argv);
+
     BIO_free_all(outbio);
+
     return (0);
 }
