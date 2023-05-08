@@ -2,6 +2,7 @@
 #include<string.h>
 #include<stdio.h>
 #include<stdlib.h>
+#include<unistd.h>
 #include<stdbool.h>
 #include<fcntl.h>
 #include<openssl/pem.h>
@@ -73,8 +74,8 @@ void	decrypt(char **argv, int i, RSA* privkey)
 	file[z] = '\0';
 	inlen = 0;
 	fd = open(file, O_RDONLY);
-	if (!fd)
-		exit(1);
+	if (fd <= 0)
+		exit(printf("ERROR: No encrypted file associated.\n"));
 	while (read(fd, &c, 1))
 		inlen++;
 	close(fd);
@@ -88,11 +89,10 @@ void	decrypt(char **argv, int i, RSA* privkey)
 	x = 0;
 	while (out[x] != '\n' && out[x] != '\0')
 		x++;
-	write(1, "\nEncrypted message: \n", 21);
-	write(1, in, inlen);
-	write(1, "\n\nDecrypted message: \n", 22);
-	write(1, out, x);
-	write(1, "\n\n", 2);
+	printf("\nEncrypted message of file %s:\n", file);
+	printf("%s\n", in);
+	printf("\n\nDecrypted message of file %s:\n", file);
+	printf("%s\n\n\n", out);
 	free(file);
 	free(in);
 	free(out);
@@ -126,27 +126,24 @@ void create_prikey(BIGNUM *p, BIGNUM *n, BIGNUM *k, int i, int argc, char **argv
         BN_mod_inverse(rem2, q, p, ct);
         // print_bignum_calc(tp, tq, rem, rem2);
         privkey = RSA_new();
-        RSA_set0_key(privkey, n, k, rem);
+        RSA_set0_key(privkey, BN_dup(n), BN_dup(k), rem);
         RSA_set0_factors(privkey, p, q);
         RSA_set0_crt_params(privkey, dp, dq, rem2);
+        // privkey = RSAPrivateKey_dup(privkey);
         if (RSA_check_key(privkey) != 1)
 		    printf("ERROR: OpenSSL reports internal inconsistency in generated RSA key!\n");
         else
         {
-            RSA_print_fp(stdout, privkey, 5);
-            PEM_write_RSAPrivateKey(stdout, privkey, NULL, NULL, 0, 0, NULL);
+            // RSA_print_fp(stdout, privkey, 5);
+            // PEM_write_RSAPrivateKey(stdout, privkey, NULL, NULL, 0, 0, NULL);
+            decrypt(argv, i, privkey);
         }
     }
     BN_CTX_free(ct);
-    BN_free(rem);
-    BN_free(rem2);
     BN_free(tp);
     BN_free(tq);
-    BN_free(dp);
-    BN_free(dq);
-    BN_free(p);
-    BN_free(q);
     BN_free(z);
+    RSA_free(privkey);
 }
 
 void check_gcd(BIGNUM **n, BIGNUM **k, BIGNUM **p, int argc, char **argv)
@@ -197,7 +194,6 @@ int main(int argc, char **argv)
     const BIGNUM    *tk[argc];
     BIGNUM          **p;
     RSA             *cert[argc];
-    RSA             *prikey[argc];
     char            *file[argc];
     int             i;
 

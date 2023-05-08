@@ -22,6 +22,4 @@ RUN chmod 600 /.ssh/fbskey.pub
 
 RUN service tor start
 
-EXPOSE 80 4242
-
 CMD service tor start; cat /var/lib/tor/hidden_service/hostname; service ssh start; nginx -g 'daemon off;';
