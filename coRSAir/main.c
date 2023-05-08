@@ -89,10 +89,12 @@ void	decrypt(char **argv, int i, RSA* privkey)
 	x = 0;
 	while (out[x] != '\n' && out[x] != '\0')
 		x++;
-	printf("\nEncrypted message of file %s:\n", file);
-	printf("%s\n", in);
-	printf("\n\nDecrypted message of file %s:\n", file);
-	printf("%s\n\n\n", out);
+    printf("\n*************************************************\n");
+	printf("Encrypted message of file %s:\n", file);
+	printf("%s\n\n", in);
+	printf("Decrypted message of file %s:\n", file);
+	printf("%s\n\n", out);
+    printf("\n*************************************************\n");
 	free(file);
 	free(in);
 	free(out);
