@@ -7,7 +7,7 @@ CFLAGS = ${INCLUDE} ${SAN}
 
 #SAN = -fsanitize=address -g3
 
-SRC = main.c 
+SRC = corsair.c 
 OBJ = ${SRC:.c=.o}
 
 all: ${NAME}

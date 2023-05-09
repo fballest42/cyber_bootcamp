@@ -1,16 +1,15 @@
 #include<math.h>
 #include<string.h>
 #include<stdio.h>
-#include<stdlib.h>
 #include<unistd.h>
-#include<stdbool.h>
+#include<stdlib.h>
 #include<fcntl.h>
-#include<string.h>
 #include<openssl/pem.h>
 #include<openssl/err.h>
 #include<openssl/bio.h>
 #include<openssl/rsa.h>
 #include<openssl/bn.h>
+#include<openssl/x509.h>
 
 void mod_exp_print(BIGNUM *n, BIGNUM *k, int i, char **argv) 
 {
@@ -120,16 +119,16 @@ void create_prikey(BIGNUM *p, BIGNUM *n, BIGNUM *k, int i, int argc, char **argv
         // RSA_print_fp(stdout, privkey, 5);
         //COMMENT OR UNCOMMENT THIS 10 LINES TO WATCH ON SCREEN OR WRITE IN A FILE THE PRIVATE KEY.
         // IF YOU DON'T WANT TO SAVE ON A FILE YOU MUST OPEN AND CHANGE fd FOR THE FILE stdout.
-        char    *tmp = ".priv";
-        char    *f_priv;
-        f_priv = malloc(sizeof(char) * (strlen(tmp) + strlen(argv[i + 1] + 1)));
-        strcpy(f_priv, argv[i + 1]);
-        strcat(f_priv, tmp);
-        if (!(fd = fopen(f_priv, "w+")))
-             printf("ERROR: Could not create the private key file.");
-        else
-            PEM_write_RSAPrivateKey(fd, privkey, NULL, NULL, 0, 0, NULL);
-        free(f_priv);
+        // char    *tmp = ".priv";
+        // char    *f_priv;
+        // f_priv = malloc(sizeof(char) * (strlen(tmp) + strlen(argv[i + 1] + 1)));
+        // strcpy(f_priv, argv[i + 1]);
+        // strcat(f_priv, tmp);
+        // if (!(fd = fopen(f_priv, "w+")))
+        //      printf("ERROR: Could not create the private key file.");
+        // else
+        //     PEM_write_RSAPrivateKey(fd, privkey, NULL, NULL, 0, 0, NULL);
+        // free(f_priv);
     }
     BN_CTX_free(ct);
     BN_free(tp);
