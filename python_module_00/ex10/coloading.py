@@ -18,7 +18,8 @@ def ft_progress(list):
         if per < 70:
             color = "\033[31m"
         elif per < 95:
-            color = "\033[33m"         else:
+            color = "\033[33m"         
+        else:
             color = "\033[32m"
         sys.stdout.write('\r')
         sys.stdout.write("ETA: %.2fs [%3d%%] |%s%-*.*s%s| %*d/%d | elapsed time %.2fs" % (eta, per + 1, color, barsize, barsize, "█"*(bar + 1), "\033[0m", length, i + 1, mval, t))
