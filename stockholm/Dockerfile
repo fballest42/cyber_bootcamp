@@ -10,7 +10,10 @@ ADD /infection/subcarpeta/S1 /home/infection/subcarpeta/S1
 ADD /infection/subcarpeta/S2 /home/infection/subcarpeta/S2
 
 COPY ./stockholm.py /stockholm.py
+COPY ./setup.py /setup.py
+COPY ./README.md /README.md
 RUN chmod +x /stockholm.py
+RUN python3 -m pip install --user --upgrade setuptools wheel twine
 
 # CMD ["python stockholm.py"]
 # RUN cp /stockholm.py /stockholm/stockhom.py
