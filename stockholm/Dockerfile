@@ -15,6 +15,7 @@ RUN chmod +x /stockholm.py
 RUN python3 -m pip install --user --upgrade setuptools wheel twine
 RUN python3 -m pip install markdown
 RUN python3 -m pip install pyAesCrypt
+RUN python3 -m pip install argparse
 
 # CMD ["python stockholm.py"]
 # RUN cp /stockholm.py /stockholm/stockhom.py

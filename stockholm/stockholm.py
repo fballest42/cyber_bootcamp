@@ -71,7 +71,10 @@ def decryptFiles(silent, key):
         if (silent == False):
             print("Trying to decrypt file:", file, "and rename it as:", (file.rstrip("ft")).rstrip('.'))
         try:
-            pyAesCrypt.decryptFile(file, (((file.rstrip("ft")).rstrip('.')).rstrip("stockholm")).rstrip("_"), key)
+            if file.endswith("_stockholm.ft"):
+                pyAesCrypt.decryptFile(file, (file.replace("_stockholm.ft", "")), key)
+            else:
+                pyAesCrypt.decryptFile(file, (file.replace(".ft", "")), key)
             os.remove(file)
         except:
             continue
