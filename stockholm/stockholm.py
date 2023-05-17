@@ -53,9 +53,12 @@ def encryptFiles(silent, key):
     files = get_files_list()
     for file in files:
         if (silent == False):
-            print("Encrypting file", file, "to a new encrypted file", file + ".ft")
+            print("Trying to encrypt file:", file,  "and rename it as:", file + ".ft")
         try:
             with open(file + ".ft") as t:
+                if (silent == False):
+                    print("\n\t***** WARNING TO AVOID IRREVERSIBLE CHANGES OR LOST OF DATA *****\nThe file:\t\t", file,  "\nMust be renamed as:\t", file + "_stockholm.ft",
+                        "\nThat is to avoid that another file will be erased during encryption.\n\n")
                 pyAesCrypt.encryptFile(file, file + "_stockholm" + ".ft", key)
         except:
             pyAesCrypt.encryptFile(file, file + ".ft", key)
@@ -66,7 +69,7 @@ def decryptFiles(silent, key):
     files = get_files_ft()
     for file in files:
         if (silent == False):
-            print("Decrypting file", file, "to a new decrypted file", (file.rstrip("ft")).rstrip('.'))
+            print("Trying to decrypt file:", file, "and rename it as:", (file.rstrip("ft")).rstrip('.'))
         try:
             pyAesCrypt.decryptFile(file, (((file.rstrip("ft")).rstrip('.')).rstrip("stockholm")).rstrip("_"), key)
             os.remove(file)
