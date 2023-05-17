@@ -54,7 +54,11 @@ def encryptFiles(silent, key):
     for file in files:
         if (silent == False):
             print("Encrypting file", file, "to a new encrypted file", file + ".ft")
-        pyAesCrypt.encryptFile(file, file + ".ft", key)
+        try:
+            with open(file + ".ft") as t:
+                pyAesCrypt.encryptFile(file, file + "_stockholm" + ".ft", key)
+        except:
+            pyAesCrypt.encryptFile(file, file + ".ft", key)
         os.remove(file)
     
 
@@ -64,7 +68,7 @@ def decryptFiles(silent, key):
         if (silent == False):
             print("Decrypting file", file, "to a new decrypted file", (file.rstrip("ft")).rstrip('.'))
         try:
-            pyAesCrypt.decryptFile(file, (file.rstrip("ft")).rstrip('.'), key)
+            pyAesCrypt.decryptFile(file, (((file.rstrip("ft")).rstrip('.')).rstrip("stockholm")).rstrip("_"), key)
             os.remove(file)
         except:
             continue
