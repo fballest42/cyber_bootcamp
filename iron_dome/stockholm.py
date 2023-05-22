@@ -27,8 +27,8 @@ extensions = ('.der', '.pfx', '.key', '.crt', '.csr', '.p12', '.pem', '.odt', '.
               '.dotx', '.dotm', '.dot', '.docm', '.docb', '.docx', '.doc')
 
 def get_files_list():
-    # path = "/home/infection"
-    path = "/Users/fballest/42/otros_cursos/doing/cyber_bootcamp/stockholm/infection"
+    path = "/home/infection"
+    # path = "/Users/fballest/42/otros_cursos/doing/cyber_bootcamp/stockholm/infection"
     file_list = []
     if not os.path.exists(path):
         print("Error: path do not exits.\n")
@@ -40,8 +40,8 @@ def get_files_list():
     return(file_list)
 
 def get_files_ft():
-    # path = "/home/infection"
-    path = "/Users/fballest/42/otros_cursos/doing/cyber_bootcamp/stockholm/infection"
+    path = "/home/infection"
+    # path = "/Users/fballest/42/otros_cursos/doing/cyber_bootcamp/stockholm/infection"
     files_ft = []
     files = os.walk(path)
     for file in files:
