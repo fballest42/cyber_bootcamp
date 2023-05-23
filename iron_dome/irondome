@@ -1,3 +1,93 @@
-#!/bin/bash/env python3
-setuid $ORIG_USER python3irondome
-exit 0
+#!/usr/bin/env python3
+
+import os, sys
+from daemonize import Daemonize
+import threading
+import psutil
+
+# pid = "/home/irondome.pid"
+pip = "/Users/fballest/42/otros_cursos/doing/cyber_bootcamp/iron_dome/irondome.pip"
+files = []
+objects = {}
+
+class Fileinfo:
+    def __init__(self, path, hash, entropy, filetype, creationdate, newhash=None, newentropy=None, newfiletype=None, newcreationdate=None):
+        self.path = path
+        self.hash = hash
+        self.entropy = entropy
+        self.filetype = filetype
+        self.creationdate = creationdate
+        self.newhash = newhash
+        self.newentropy = newentropy
+        self.newfiletype = newfiletype
+        self.newcreationdate = newcreationdate
+    
+    def __str__(self):
+        return f"File: {self.path}, Hash: {self.hash}, Entropy: {self.entropy}, Filetype: {self.filetype}, \
+                Creation Date: {self.creationdate}, New Hash: {self.newhash}, New Entropy: {self.newentropy}, \
+                New Filetype: {self.newfiletype}, New Creation Date: {self.newcreationdate}"
+
+def get_files_list(route, extensions):
+    file_list = []
+    if not os.path.exists(route):
+        print("Error: path do not exits.\n")
+        exit
+    files = os.walk(route)
+    for file in files:
+        for f in file[2]:
+            if len(extensions) == 0:
+                file_list.append(file[0] + "/" + f)
+            elif f.endswith(tuple(extensions)):
+                file_list.append(file[0] + "/" + f)
+    return(file_list)
+
+def disk_chequer(route):
+    if not os.path.exists(route):
+        print("Error: path do not exits.\n")
+        exit
+        disk_path = psutil.disk_usage(route) #._asdict()
+        print(disk_path) 
+        # disk_total = disk_path['total'] / 1024 / 1024
+        # disk_used = disk_path['used'] / 1024 / 1024
+        # disk_free = disk_path['free'] / 1024 / 1024
+        # disk_perc = disk_path['percent']
+        # print(disk_path, disk_total, disk_used, disk_free, disk_perc)
+
+    # disk = {}
+    # for d in disk_use:
+    #     disk[d.lstrip("=")] = d.rstrip("=")
+    # print(disk)
+
+
+
+
+    
+def starter(route, extensions):
+    file_list = get_files_list(route, extensions)
+    print(file_list)
+
+def main(argv):
+    extensions = []
+    route = str(argv[0])
+    for ar in argv[1:]:
+        if ar.startswith("."):
+            extensions.append(ar)
+        else:
+            extensions.append("." + ar)
+    # h2 = threading.Thread(name="hilo_", target = monitoring, args=(route,))
+    starter(route, extensions)
+    disk_chequer(route)
+    # h2.start()
+    # print(route)
+    # print(extensions) 
+    # while True:
+    #   # your code here
+
+if __name__ == '__main__':
+    runner = os.path.basename(sys.argv[0])
+    pidfile='/tmp/%s' % runner       # any name
+    daemon = Daemonize(app = "irondome", pid = pip, action = main(sys.argv[1:]))
+    daemon.start()
+
+
+

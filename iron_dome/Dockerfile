@@ -10,10 +10,12 @@ ADD /infection/subcarpeta/S1 /home/infection/subcarpeta/S1
 ADD /infection/subcarpeta/S2 /home/infection/subcarpeta/S2
 
 COPY ./stockholm.py /stockholm.py
-COPY ./irondome /irondome
-RUN CHMOD 750 irondome
 COPY ./README.md /README.md
 RUN chmod +x /stockholm.py
+COPY ./irondome /irondome
+RUN chown root:root /irondome
+RUN chmod 700 /irondome
+RUN adduser fballest; echo "fballest:1234abcd" | chpasswd
 RUN python3 -m pip install --user --upgrade setuptools wheel twine
 RUN python3 -m pip install markdown
 RUN python3 -m pip install pyAesCrypt
