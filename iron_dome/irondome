@@ -4,6 +4,10 @@ import os, sys
 from daemonize import Daemonize
 import threading
 import psutil
+import sys
+import logging
+from watchdog.observers import Observer
+from watchdog.events import LoggingEventHandler
 
 # pid = "/home/irondome.pid"
 pip = "/Users/fballest/42/otros_cursos/doing/cyber_bootcamp/iron_dome/irondome.pip"
@@ -41,12 +45,29 @@ def get_files_list(route, extensions):
                 file_list.append(file[0] + "/" + f)
     return(file_list)
 
+def file_checker(route):
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s - %(message)s',
+                        datefmt='%Y-%m-%d %H:%M:%S')
+    event_handler = LoggingEventHandler()
+    observer = Observer()
+    observer.schedule(event_handler, route, recursive = True)
+    observer.start()
+    try:
+        while observer.is_alive():
+            observer.join(1)
+    finally:
+        observer.stop()
+        observer.join()
+
 def disk_chequer(route):
     if not os.path.exists(route):
         print("Error: path do not exits.\n")
         exit
-        disk_path = psutil.disk_usage(route) #._asdict()
-        print(disk_path) 
+    # print(route)
+    # disk_path = psutil.disk_usage(route) #._asdict()
+    # print(disk_path)
+
         # disk_total = disk_path['total'] / 1024 / 1024
         # disk_used = disk_path['used'] / 1024 / 1024
         # disk_free = disk_path['free'] / 1024 / 1024
@@ -64,7 +85,7 @@ def disk_chequer(route):
     
 def starter(route, extensions):
     file_list = get_files_list(route, extensions)
-    print(file_list)
+    # print(file_list)
 
 def main(argv):
     extensions = []
@@ -74,10 +95,11 @@ def main(argv):
             extensions.append(ar)
         else:
             extensions.append("." + ar)
-    # h2 = threading.Thread(name="hilo_", target = monitoring, args=(route,))
+    h2 = threading.Thread(name="hilo_", target = file_checker, args=(route,))
+    h3 = threading.Thread(name="hilo_", target = file_checker, args=(route,))
     starter(route, extensions)
     disk_chequer(route)
-    # h2.start()
+    h2.start()
     # print(route)
     # print(extensions) 
     # while True:
